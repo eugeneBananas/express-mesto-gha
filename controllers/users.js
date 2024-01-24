@@ -8,20 +8,22 @@ module.exports.getUsers = (req, res, next) => {
     });
 };
 
-//исправить чтобы по айди
+// исправить чтобы по айд
 module.exports.getOneUser = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail()
+    .orFail(() => {
+      throw new Error('NotFound');
+    })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        next(
-          new BadRequestError(`ID ${req.params.userId} является некорректным`)
-        );
-      } else if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        next(
-          new NotFounderError(`ID пользователя ${req.params.userId} не найден`)
-        );
+        err.status(400);
+        err.message('Введен некорректный ID');
+        next(err);
+      } else if (err.message === 'NotFound') {
+        err.status(404);
+        err.message('Ошибка при вводе данных пользователя');
+        next(err);
       } else {
         next(err);
       }
@@ -36,7 +38,9 @@ module.exports.createUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(err.message));
+        err.status(404);
+        err.message('Введены некорректные данные');
+        next(err);
       } else {
         next(err);
       }
@@ -48,17 +52,19 @@ module.exports.editUserData = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(err.message));
+        err.status(400);
+        err.message('Введены некорректные данные');
+        next(err);
       } else if (err instanceof mongoose.Error.CastError) {
-        next(
-          new BadRequestError(`ID ${req.params.userId} является некорректным`)
-        );
+        err.status(400);
+        err.message('Введен некорректный ID');
+        next(err);
       } else {
         next(err);
       }
@@ -70,17 +76,19 @@ module.exports.editUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(err.message));
+        err.status(400);
+        err.message('Введены некорректные данные');
+        next(err);
       } else if (err instanceof mongoose.Error.CastError) {
-        next(
-          new BadRequestError(`ID ${req.params.userId} является некорректным`)
-        );
+        err.status(400);
+        err.message('Введен некорректный ID');
+        next(err);
       } else {
         next(err);
       }

@@ -18,7 +18,12 @@
     "lint": "npx eslint .",
     "lintfix": "npx eslint . --fix"
   },
+  "prettier": {
+    "singleQuote": true
+  },
   "devDependencies": {
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
     "eslint": "^8.56.0",
     "nodemon": "^3.0.2"
   }
