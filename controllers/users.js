@@ -38,6 +38,7 @@ module.exports.createUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
+        // res.status(400).send({ message: 'Введены некорректные данные' });
         const error = new Error('Введены некорректные данные');
         error.statusCode = 400;
         next(error);
