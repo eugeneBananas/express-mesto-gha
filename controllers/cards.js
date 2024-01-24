@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res, next) => {
@@ -11,15 +12,14 @@ module.exports.getCards = (req, res, next) => {
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .orFail()
     .then((card) => {
       res.status(201).send({ data: card });
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        err.status(400);
-        err.message('Введены некорректные данные');
-        next(err);
+        const error = new Error('Введены некорректные данные');
+        error.statusCode = 400;
+        next(error);
       } else {
         next(err);
       }
@@ -36,13 +36,13 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        err.status(400);
-        err.message('Введен некорректный ID');
-        next(err);
-      } else if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        err.status(404);
-        err.message('Ошибка при вводе данных пользователя');
-        next(err);
+        const error = new Error('Введен некорректный ID');
+        error.statusCode = 400;
+        next(error);
+      } else if (err.message === 'NotFound') {
+        const error = new Error('Ошибка при вводе данных пользователя');
+        error.statusCode = 404;
+        next(error);
       } else {
         next(err);
       }
@@ -64,10 +64,10 @@ module.exports.getLikeCard = (req, res, next) => {
         err.status(400);
         err.message('Введен некорректный ID');
         next(err);
-      } else if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        err.status(404);
-        err.message('Ошибка при вводе данных пользователя');
-        next(err);
+      } else if (err.message === 'NotFound') {
+        const error = new Error('Ошибка при вводе данных пользователя');
+        error.statusCode = 404;
+        next(error);
       } else {
         next(err);
       }
@@ -86,13 +86,13 @@ module.exports.removeLikeCard = (req, res, next) => {
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        err.status(400);
-        err.message('Введен некорректный ID');
-        next(err);
-      } else if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        err.status(404);
-        err.message('Ошибка при вводе данных пользователя');
-        next(err);
+        const error = new Error('Введен некорректный ID');
+        error.statusCode = 400;
+        next(error);
+      } else if (err.message === 'NotFound') {
+        const error = new Error('Ошибка при вводе данных пользователя');
+        error.statusCode = 404;
+        next(error);
       } else {
         next(err);
       }

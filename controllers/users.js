@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res, next) => {
@@ -17,13 +18,13 @@ module.exports.getOneUser = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        err.status(400);
-        err.message('Введен некорректный ID');
-        next(err);
+        const error = new Error('Введен некорректный ID');
+        error.statusCode = 400;
+        next(error);
       } else if (err.message === 'NotFound') {
-        err.status(404);
-        err.message('Ошибка при вводе данных пользователя');
-        next(err);
+        const error = new Error('Ошибка при вводе данных пользователя');
+        error.statusCode = 404;
+        next(error);
       } else {
         next(err);
       }
@@ -34,13 +35,12 @@ module.exports.createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .orFail()
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        err.status(404);
-        err.message('Введены некорректные данные');
-        next(err);
+        const error = new Error('Введены некорректные данные');
+        error.statusCode = 400;
+        next(error);
       } else {
         next(err);
       }
@@ -54,17 +54,16 @@ module.exports.editUserData = (req, res, next) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        err.status(400);
-        err.message('Введены некорректные данные');
-        next(err);
+        const error = new Error('Введены некорректные данные');
+        error.statusCode = 400;
+        next(error);
       } else if (err instanceof mongoose.Error.CastError) {
-        err.status(400);
-        err.message('Введен некорректный ID');
-        next(err);
+        const error = new Error('Введен некорректный ID');
+        error.statusCode = 400;
+        next(error);
       } else {
         next(err);
       }
@@ -78,17 +77,16 @@ module.exports.editUserAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        err.status(400);
-        err.message('Введены некорректные данные');
-        next(err);
+        const error = new Error('Введены некорректные данные');
+        error.statusCode = 400;
+        next(error);
       } else if (err instanceof mongoose.Error.CastError) {
-        err.status(400);
-        err.message('Введен некорректный ID');
-        next(err);
+        const error = new Error('Введен некорректный ID');
+        error.statusCode = 400;
+        next(error);
       } else {
         next(err);
       }
