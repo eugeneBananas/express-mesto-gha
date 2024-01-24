@@ -61,9 +61,9 @@ module.exports.getLikeCard = (req, res, next) => {
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        err.status(400);
-        err.message('Введен некорректный ID');
-        next(err);
+        const error = new Error('Введен некорректный ID');
+        error.statusCode = 400;
+        next(error);
       } else if (err.message === 'NotFound') {
         const error = new Error('Ошибка при вводе данных пользователя');
         error.statusCode = 404;
