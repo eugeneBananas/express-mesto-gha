@@ -22,10 +22,10 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-// app.use((req, res, next) => {
-//   res.status(404).send({ message: 'Страницы не существует' });
-//   next();
-// });
+app.use((req, res, next) => {
+  res.status(404).send({ message: 'Страницы не существует' });
+  next();
+});
 
 app.use((error, req, res, next) => {
   const { statusCode = 500, message } = error;

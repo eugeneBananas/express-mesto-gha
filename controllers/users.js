@@ -3,7 +3,7 @@ const User = require('../models/user');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch((err) => {
       next(err);
     });
@@ -15,7 +15,7 @@ module.exports.getOneUser = (req, res, next) => {
     .orFail(() => {
       throw new Error('NotFound');
     })
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         const error = new Error('Введен некорректный ID');
@@ -55,7 +55,7 @@ module.exports.editUserData = (req, res, next) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         const error = new Error('Введены некорректные данные');
@@ -78,7 +78,7 @@ module.exports.editUserAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         const error = new Error('Введены некорректные данные');
