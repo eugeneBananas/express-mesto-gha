@@ -27,25 +27,34 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndDelete(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(() => {
       throw new Error('NotFound');
     })
     .then((card) => {
-      res.send({ data: card });
+      if (!card.owner === req.user._id) {
+        throw new Error('Нельзя удалить карточку другого пользователя');
+      }
+      Card.deleteOne(card)
+        .then(() => {
+          res.send({ data: card });
+        })
+        .catch((err) => {
+          if (err instanceof mongoose.Error.CastError) {
+            const error = new Error('Введен некорректный ID');
+            error.statusCode = 400;
+            next(error);
+          } else if (err.message === 'NotFound') {
+            const error = new Error('Ошибка при вводе данных пользователя');
+            error.statusCode = 404;
+            next(error);
+          } else {
+            next(err);
+          }
+        });
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        const error = new Error('Введен некорректный ID');
-        error.statusCode = 400;
-        next(error);
-      } else if (err.message === 'NotFound') {
-        const error = new Error('Ошибка при вводе данных пользователя');
-        error.statusCode = 404;
-        next(error);
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
