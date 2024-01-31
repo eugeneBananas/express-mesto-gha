@@ -1,3 +1,6 @@
+const HTTP_STATUS = {
+  UNAUTHORIZED: 401,
+};
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
@@ -5,7 +8,7 @@ module.exports = (req, res, next) => {
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     const error = new Error('Неправильные почта или пароль');
-    error.statusCode = 401;
+    error.statusCode = HTTP_STATUS.UNAUTHORIZED;
     next(error);
   }
 
@@ -16,7 +19,7 @@ module.exports = (req, res, next) => {
     payload = jwt.verify(token, 'c9310ab8bf2ac4c3');
   } catch (err) {
     const error = new Error('Неправильные почта или пароль');
-    error.statusCode = 401;
+    error.statusCode = HTTP_STATUS.UNAUTHORIZED;
     next(error);
   }
 

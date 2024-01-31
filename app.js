@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/signin', require('./routes/signin'));
 app.use('/signup', require('./routes/signup'));
 
-app.use(auth);
+app.use(auth); // почему перехватывает другие ошибки
 // требуют авторизации
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
