@@ -1,3 +1,8 @@
+const HTTP_STATUS = {
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+};
 const { default: mongoose } = require('mongoose');
 const Card = require('../models/card');
 
@@ -13,12 +18,12 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      res.status(201).send({ data: card });
+      res.status(HTTP_STATUS.CREATED).send({ data: card });
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         const error = new Error('Введены некорректные данные');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.BAD_REQUEST;
         next(error);
       } else {
         next(err);
@@ -42,11 +47,11 @@ module.exports.deleteCard = (req, res, next) => {
         .catch((err) => {
           if (err instanceof mongoose.Error.CastError) {
             const error = new Error('Введен некорректный ID');
-            error.statusCode = 400;
+            error.statusCode = HTTP_STATUS.BAD_REQUEST;
             next(error);
           } else if (err.message === 'NotFound') {
             const error = new Error('Ошибка при вводе данных пользователя');
-            error.statusCode = 404;
+            error.statusCode = HTTP_STATUS.NOT_FOUND;
             next(error);
           } else {
             next(err);
@@ -71,11 +76,11 @@ module.exports.getLikeCard = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         const error = new Error('Введен некорректный ID');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.BAD_REQUEST;
         next(error);
       } else if (err.message === 'NotFound') {
         const error = new Error('Ошибка при вводе данных пользователя');
-        error.statusCode = 404;
+        error.statusCode = HTTP_STATUS.NOT_FOUND;
         next(error);
       } else {
         next(err);
@@ -96,11 +101,11 @@ module.exports.removeLikeCard = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         const error = new Error('Введен некорректный ID');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.BAD_REQUEST;
         next(error);
       } else if (err.message === 'NotFound') {
         const error = new Error('Ошибка при вводе данных пользователя');
-        error.statusCode = 404;
+        error.statusCode = HTTP_STATUS.NOT_FOUND;
         next(error);
       } else {
         next(err);

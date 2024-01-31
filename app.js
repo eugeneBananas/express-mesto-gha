@@ -1,3 +1,7 @@
+const HTTP_STATUS = {
+  NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500,
+};
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -30,14 +34,14 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res, next) => {
-  res.status(404).send({ message: 'Страницы не существует' });
+  res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'Страницы не существует' });
   next();
 });
 
 app.use((error, req, res, next) => {
-  const { statusCode = 500, message } = error;
+  const { statusCode = HTTP_STATUS.INTERNAL_SERVER_ERROR, message } = error;
   res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+    message: statusCode === HTTP_STATUS.INTERNAL_SERVER_ERROR ? 'На сервере произошла ошибка' : message,
   });
   next();
 });

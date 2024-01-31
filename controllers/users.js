@@ -1,3 +1,9 @@
+const HTTP_STATUS = {
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404,
+};
 const { default: mongoose } = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -20,11 +26,11 @@ module.exports.getOneUser = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         const error = new Error('Введен некорректный ID');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.BAD_REQUEST;
         next(error);
       } else if (err.message === 'NotFound') {
         const error = new Error('Ошибка при вводе данных пользователя');
-        error.statusCode = 404;
+        error.statusCode = HTTP_STATUS.NOT_FOUND;
         next(error);
       } else {
         next(err);
@@ -38,7 +44,7 @@ module.exports.getInfo = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         const error = new Error('Введен некорректный ID');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.BAD_REQUEST;
         next(error);
       } else {
         next(err);
@@ -63,16 +69,9 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(201).send(user))
+    .then((user) => res.status(HTTP_STATUS.CREATED).send(user))
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        // res.status(400).send({ message: 'Введены некорректные данные' });
-        const error = new Error('Введены некорректные данные');
-        error.statusCode = 400;
-        next(error);
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
@@ -87,11 +86,11 @@ module.exports.editUserData = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         const error = new Error('Введены некорректные данные');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.BAD_REQUEST;
         next(error);
       } else if (err instanceof mongoose.Error.CastError) {
         const error = new Error('Введен некорректный ID');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.NOT_FOUND;
         next(error);
       } else {
         next(err);
@@ -110,11 +109,11 @@ module.exports.editUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         const error = new Error('Введены некорректные данные');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.BAD_REQUEST;
         next(error);
       } else if (err instanceof mongoose.Error.CastError) {
         const error = new Error('Введен некорректный ID');
-        error.statusCode = 400;
+        error.statusCode = HTTP_STATUS.NOT_FOUND;
         next(error);
       } else {
         next(err);
@@ -138,7 +137,7 @@ module.exports.login = (req, res, next) => {
     })
     .catch(() => {
       const error = new Error('Неправильные почта или пароль');
-      error.statusCode = 401;
+      error.statusCode = HTTP_STATUS.UNAUTHORIZED;
       next(error);
     });
 };
