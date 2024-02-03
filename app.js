@@ -6,6 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
@@ -24,6 +25,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //   next();
 // });
 
+app.use(requestLogger);
+
 // не требуют авторизации
 app.use('/signin', require('./routes/signin'));
 app.use('/signup', require('./routes/signup'));
@@ -32,6 +35,8 @@ app.use(auth); // почему перехватывает другие ошиб�
 // требуют авторизации
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.use(errorLogger);
 
 app.use((req, res, next) => {
   res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'Страницы не существует' });
