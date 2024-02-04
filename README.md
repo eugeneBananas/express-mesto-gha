@@ -15,3 +15,9 @@ https://github.com/eugeneBananas/express-mesto-gha
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
+// У меня не запускается сайт с фронтендом, делал все как по инструкции, но появлялась ошибка 403. впоследствии появляется 500, не знаю, как исправить. https тоже не могу настроить.
+
+IP: 51.250.69.204
+Frontend http://mesto-eugenebananas-front.nomoredomainsmonster.ru/
+Backend http://api.mesto-eugenebananas-front.nomoredomainsmonster.ru/
