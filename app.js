@@ -27,6 +27,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 // не требуют авторизации
 app.use('/signin', require('./routes/signin'));
 app.use('/signup', require('./routes/signup'));
